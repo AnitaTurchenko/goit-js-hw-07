@@ -1,8 +1,6 @@
 import { galleryItems } from './gallery-items.js';
 // Change code below this line
 
-console.log(galleryItems);
-
 const galleryEl = document.querySelector(".gallery");
 const imagesMarkup = createGallery(galleryItems);
 
@@ -18,6 +16,7 @@ function createGallery (galleryItems) {
             src="${preview}"
             data-source="${original}"
             alt="${description}"
+            target="_blank"
           />
         </a>
       </li>`
@@ -25,11 +24,23 @@ function createGallery (galleryItems) {
     .join(" ")
 };
 
-galleryEl.addEventListener("click", openBigImage);
-
 function openBigImage(evt) {
-    if(evt.target.nodeName !== "IMG") {
+    evt.preventDefault();
+    if(!evt.target.classList.contains("gallery__image")) {
         return;
     }
-    console.log(evt.target.nodeName);
-}
+        const source = evt.target.dataset.source;
+        const instance = basicLightbox.create(`
+    <img src="${source}">`);
+
+    instance.show();
+
+    window.addEventListener("keydown", closeModal);
+    function closeModal(evt) {
+        if (evt.code === "Escape") {
+            instance.close();
+        }
+    };
+};
+
+    galleryEl.addEventListener("click", openBigImage);
